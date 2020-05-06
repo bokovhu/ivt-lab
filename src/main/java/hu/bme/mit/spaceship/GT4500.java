@@ -10,9 +10,21 @@ public class GT4500 implements SpaceShip {
 
   private boolean wasPrimaryFiredLast = false;
 
+  // A constructor, using which all dependencies of
+  // the GT4500 spaceship instance can be injected.
+  public GT4500(
+      TorpedoStore primaryTorpedoStore,
+      TorpedoStore secondaryTorpedoStore
+  ) {
+    this.primaryTorpedoStore = primaryTorpedoStore;
+    this.secondaryTorpedoStore = secondaryTorpedoStore;
+  }
+
+  // A no args constructor, that "injects" the default
+  // torpedo stores. This constructor was created to
+  // keep backwards-compability.
   public GT4500() {
-    this.primaryTorpedoStore = new TorpedoStore(10);
-    this.secondaryTorpedoStore = new TorpedoStore(10);
+    this(new TorpedoStore(10), new TorpedoStore(10));
   }
 
   public boolean fireLaser(FiringMode firingMode) {
