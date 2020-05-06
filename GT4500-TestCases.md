@@ -29,7 +29,7 @@
   * Leadunk egy lövést SINGLE módban
 * Elvárt viselkedés
   * A lövés leadása HAMIS értékkel tér vissza
-  * A tüzelés meg lett kísérelve mindkét torpedóvető esetében
+  * A tüzelés nem lett megkísérelve egyetlen torpedóvető esetén sem
 
 # Ha kezdeti állapotban SINGLE módban leadott lövéskor az elsődleges torpedóvető hibát jelez, a másodlagos torpedóvető nem kerül elsütésre, és a tüzelés kimenete HAMIS érték
 
