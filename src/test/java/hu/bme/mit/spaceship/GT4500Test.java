@@ -175,4 +175,32 @@ public class GT4500Test {
     verify(secondaryTorpedoStore).fire(20);
   }
 
+  @Test
+  public void fireTorpedo_Single_ShouldAlwaysFireSecondaryIfPrimaryIsEmpty () {
+    // Arrange
+    // Create a new instance of the ship for this test case
+    this.ship = new GT4500(
+      this.primaryTorpedoStore,
+      this.secondaryTorpedoStore
+    );
+    when (primaryTorpedoStore.isEmpty()).thenReturn(true);
+    when (secondaryTorpedoStore.isEmpty()).thenReturn(false);
+    when (primaryTorpedoStore.fire(anyInt())).thenReturn(false);
+    when (secondaryTorpedoStore.fire(anyInt())).thenReturn(true);
+
+    // Act
+    // Fire 10 times
+    boolean result = true;
+    for (int i = 0; i < 10; i++) {
+      result &= ship.fireTorpedo(FiringMode.SINGLE);
+    }
+
+    // Assert
+    assertEquals(true, result);
+    // Should not try to fire an empty store
+    verify(primaryTorpedoStore, never()).fire(anyInt());
+    // Should have fired secondary 10 times
+    verify(secondaryTorpedoStore, times(10)).fire(1);
+  }
+
 }
