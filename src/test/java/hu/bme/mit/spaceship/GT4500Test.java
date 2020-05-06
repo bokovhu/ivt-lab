@@ -61,4 +61,118 @@ public class GT4500Test {
     verify(secondaryTorpedoStore).fire(20);
   }
 
+  @Test
+  public void fireTorpedo_Single_ShouldUseThePrimaryStoreInItsInitialState () {
+    // Arrange
+    // As-per the test plan, this test case requires a newly constructed instance
+    this.ship = new GT4500(
+      this.primaryTorpedoStore,
+      this.secondaryTorpedoStore
+    );
+    when (primaryTorpedoStore.isEmpty()).thenReturn(false);
+    when (primaryTorpedoStore.fire(anyInt())).thenReturn(true);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(true, result);
+    verify(primaryTorpedoStore).fire(1);
+    verify(secondaryTorpedoStore, never()).fire(anyInt());
+  }
+
+  @Test
+  public void fireTorpedo_Single_ShouldAlternateBetweenStores () {
+    // Arrange
+    // As-per the test plan, this test case requires a newly constructed instance
+    this.ship = new GT4500(
+      this.primaryTorpedoStore,
+      this.secondaryTorpedoStore
+    );
+    when (primaryTorpedoStore.isEmpty()).thenReturn(false);
+    when (primaryTorpedoStore.fire(anyInt())).thenReturn(true);
+    when (secondaryTorpedoStore.isEmpty()).thenReturn(false);
+    when (secondaryTorpedoStore.fire(anyInt())).thenReturn(true);
+
+    // Act
+    // Fire 3 times
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+    result &= ship.fireTorpedo(FiringMode.SINGLE);
+    result &= ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(true, result);
+    verify(primaryTorpedoStore, times(2)).fire(1);
+    verify(secondaryTorpedoStore, times(1)).fire(1);
+  }
+
+  @Test
+  public void fireTorpedo_Single_ShouldReturnFalseWhenStoresAreEmpty () {
+    // Arrange
+    // As-per the test plan, this test case requires a newly constructed instance
+    this.ship = new GT4500(
+      this.primaryTorpedoStore,
+      this.secondaryTorpedoStore
+    );
+    when (primaryTorpedoStore.isEmpty()).thenReturn(true);
+    when (secondaryTorpedoStore.isEmpty()).thenReturn(true);
+
+    // Act
+    // Fire 3 times
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(false, result);
+    verify(primaryTorpedoStore, never()).fire(anyInt());
+    verify(secondaryTorpedoStore, never()).fire(anyInt());
+    verify(primaryTorpedoStore).isEmpty();
+    verify(secondaryTorpedoStore).isEmpty();
+  }
+
+  @Test
+  public void fireTorpedo_Single_ShouldOnlyFirePrimaryInCaseOfStoreFailureInItsInitialState () {
+    // Arrange
+    // As-per the test plan, this test case requires a newly constructed instance
+    this.ship = new GT4500(
+      this.primaryTorpedoStore,
+      this.secondaryTorpedoStore
+    );
+    when (primaryTorpedoStore.isEmpty()).thenReturn(false);
+    when (primaryTorpedoStore.fire(anyInt())).thenReturn(false);
+
+    // Act
+    // Fire 3 times
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    assertEquals(false, result);
+    verify(primaryTorpedoStore, times(1)).fire(1);
+    verify(secondaryTorpedoStore, never()).fire(anyInt());
+  }
+
+  @Test
+  public void fireTorpedo_All_ShouldFireSecondaryEvenIfPrimaryIsInFailure () {
+    // Arrange
+    // As-per the test plan, this test case requires a newly constructed instance
+    this.ship = new GT4500(
+      this.primaryTorpedoStore,
+      this.secondaryTorpedoStore
+    );
+    when (primaryTorpedoStore.isEmpty()).thenReturn(false);
+    when (secondaryTorpedoStore.isEmpty()).thenReturn(false);
+    when (primaryTorpedoStore.fire(anyInt())).thenReturn(false);
+    when (secondaryTorpedoStore.fire(anyInt())).thenReturn(true);
+    when (primaryTorpedoStore.getTorpedoCount()).thenReturn(10);
+    when (secondaryTorpedoStore.getTorpedoCount()).thenReturn(20);
+
+    // Act
+    // Fire 3 times
+    boolean result = ship.fireTorpedo(FiringMode.ALL);
+
+    // Assert
+    assertEquals(true, result);
+    verify(primaryTorpedoStore).fire(10);
+    verify(secondaryTorpedoStore).fire(20);
+  }
+
 }
