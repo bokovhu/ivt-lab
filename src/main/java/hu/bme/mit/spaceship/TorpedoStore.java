@@ -13,13 +13,13 @@ public class TorpedoStore {
 
   // rate of failing to fire torpedos [0.0, 1.0]
   private double FAILURE_RATE = 0.0; //NOSONAR
-  private Random generator = null;
+  private Random randomGenerator = null;
   private int torpedoCount = 0;
 
   public TorpedoStore(int numberOfTorpedos){
     this.torpedoCount = numberOfTorpedos;
     try {
-      this.generator = SecureRandom.getInstanceStrong();
+      this.randomGenerator = SecureRandom.getInstanceStrong();
     } catch(NoSuchAlgorithmException ex) {
       throw new IllegalStateException("Cannot create torpedo store, random generator could not be initialized!", ex);
     }
@@ -42,7 +42,7 @@ public class TorpedoStore {
     boolean success = false;
 
     // simulate random overheating of the launcher bay which prevents firing
-    double r = generator.nextDouble();
+    double r = randomGenerator.nextDouble();
 
     if (r >= FAILURE_RATE) {
       // successful firing
